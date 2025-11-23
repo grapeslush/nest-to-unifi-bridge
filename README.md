@@ -14,6 +14,44 @@ Python helper script that requests a Google Nest Doorbell live stream and feeds 
 3. Ensure your UDM Pro/Protect controller is reachable and note either admin credentials or an adoption token.
 4. Pick a unique MAC address for the virtual camera (e.g., `python -c "import uuid;print(':'.join([uuid.uuid4().hex[i:i+2] for i in range(0,12,2)]))"`).
 
+## Obtaining Google Device Access credentials
+These steps walk through every Google requirement for a new user. You only need to complete them once.
+
+1. **Join the Device Access program**
+   - Sign in with the Google account linked to your Nest hardware.
+   - Go to [Google Device Access](https://developers.google.com/nest/device-access) and click **Get Started**.
+   - Accept the terms and pay the one-time $5 registration fee. Without this, API calls will be rejected.
+
+2. **Create a Device Access project**
+   - In the Device Access console, click **Create project**. Give it a name (e.g., `Nest Bridge`).
+   - After creation, copy the numeric **Project ID**. The script uses this in the format `enterprises/<PROJECT_ID>/…`.
+
+3. **Set up OAuth consent**
+   - Click into the project and open the **OAuth** tab. Choose **OAuth ID** to create credentials.
+   - For testing, select **Desktop** as the application type and download the generated `client_id` and `client_secret`.
+   - Under **OAuth Scopes**, ensure `https://www.googleapis.com/auth/sdm.service` is enabled.
+
+4. **Generate an access token**
+   - From the OAuth tab, click **Get access token**.
+   - Sign in with the Google account that owns your Nest device and approve the requested scopes.
+   - The console shows a bearer token—copy it. This is the value you pass to `--nest-token`.
+   - Tokens expire after an hour. If you need to refresh automatically, exchange the refresh token using standard OAuth flows
+     (or re-run the token flow when needed).
+
+5. **Find your device ID**
+   - In the Device Access console, open **Devices**. You should see your Nest Doorbell listed. The **Name** column shows the
+     full resource string `enterprises/<PROJECT_ID>/devices/<DEVICE_ID>`.
+   - If you prefer an API call, use the access token to list devices:
+     ```bash
+     curl -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+       "https://smartdevicemanagement.googleapis.com/v1/enterprises/YOUR_PROJECT_ID/devices"
+     ```
+     The response includes `name` fields containing the device ID. Provide just the `<DEVICE_ID>` portion to the script.
+
+6. **Link your Google account (if prompted)**
+   - If the Devices list is empty, click **Link** in the console to connect your Google account to the project. Approve access
+     for the Nest device, then refresh the Devices page.
+
 ## Usage
 Request a stream and register the virtual camera:
 ```bash
