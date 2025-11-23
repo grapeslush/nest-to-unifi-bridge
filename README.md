@@ -8,7 +8,7 @@ Python helper script that requests a Google Nest Doorbell live stream and feeds 
    pip install -r requirements.txt
    ```
 2. Create a Device Access project and obtain:
-   - An OAuth access token with SDM scope
+   - An OAuth access token with SDM scope (generated via the Google Auth Platform)
    - The project ID
    - The doorbell device ID (combine as `enterprises/<PROJECT_ID>/devices/<DEVICE_ID>`)
 3. Ensure your UDM Pro/Protect controller is reachable and note either admin credentials or an adoption token.
@@ -26,13 +26,14 @@ These steps walk through every Google requirement for a new user. You only need 
    - In the Device Access console, click **Create project**. Give it a name (e.g., `Nest Bridge`).
    - After creation, copy the numeric **Project ID**. The script uses this in the format `enterprises/<PROJECT_ID>/…`.
 
-3. **Set up OAuth consent**
-   - Click into the project and open the **OAuth** tab. Choose **OAuth ID** to create credentials.
-   - For testing, select **Desktop** as the application type and download the generated `client_id` and `client_secret`.
-   - Under **OAuth Scopes**, ensure `https://www.googleapis.com/auth/sdm.service` is enabled.
+3. **Create OAuth credentials in the Google Auth Platform**
+   - Open the [Google Auth Platform](https://console.cloud.google.com/auth) and create a new **OAuth client**.
+   - Choose **Desktop** as the application type and download the `client_id` and `client_secret` JSON.
+   - Under **OAuth scopes**, include `https://www.googleapis.com/auth/sdm.service`.
 
-4. **Generate an access token**
-   - From the OAuth tab, click **Get access token**.
+4. **Generate an access token (Device Access console)**
+   - In the Device Access console, go to **Projects → OAuth** and upload the JSON from the Google Auth Platform.
+   - Click **Get access token** to start the consent flow.
    - Sign in with the Google account that owns your Nest device and approve the requested scopes.
    - The console shows a bearer token—copy it. This is the value you pass to `--nest-token`.
    - Tokens expire after an hour. If you need to refresh automatically, exchange the refresh token using standard OAuth flows
