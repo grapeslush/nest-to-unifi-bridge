@@ -29,12 +29,12 @@ These steps walk through every Google requirement for a new user. You only need 
 3. **Create OAuth credentials in the Google Auth Platform**
    - Open the [Google Auth Platform](https://console.cloud.google.com/auth) and create a new **OAuth client**.
    - Choose **Desktop** as the application type and download the `client_id` and `client_secret` JSON.
-   - Under **OAuth scopes**, include `https://www.googleapis.com/auth/sdm.service`.
 
 4. **Generate an access token (Device Access console)**
    - In the Device Access console, go to **Projects → OAuth** and upload the JSON from the Google Auth Platform.
    - Click **Get access token** to start the consent flow.
-   - Sign in with the Google account that owns your Nest device and approve the requested scopes.
+   - Sign in with the Google account that owns your Nest device and approve the requested scopes; the flow automatically
+     requests `https://www.googleapis.com/auth/sdm.service`.
    - The console shows a bearer token—copy it. This is the value you pass to `--nest-token`.
    - Tokens expire after an hour. If you need to refresh automatically, exchange the refresh token using standard OAuth flows
      (or re-run the token flow when needed).
