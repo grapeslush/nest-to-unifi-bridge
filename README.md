@@ -26,18 +26,21 @@ These steps walk through every Google requirement for a new user. You only need 
    - In the Device Access console, click **Create project**. Give it a name (e.g., `Nest Bridge`).
    - After creation, copy the numeric **Project ID**. The script uses this in the format `enterprises/<PROJECT_ID>/…`.
 
-3. **Create OAuth credentials in the Google Auth Platform**
-   - Open the [Google Auth Platform](https://console.cloud.google.com/auth) and create a new **OAuth client**.
-   - Choose **Desktop** as the application type and download the `client_id` and `client_secret` JSON.
+3. **Create OAuth credentials in the Google Cloud console**
+   - Open the [Google Cloud console](https://console.cloud.google.com/) and create a project (or reuse an existing one).
+   - Configure the OAuth consent screen (External is fine for personal use) and publish the app.
+   - Go to **APIs & Services → Credentials** and create an **OAuth client ID** with **Desktop** as the application type.
+   - Download the JSON that contains `client_id` and `client_secret`.
 
-4. **Generate an access token (Device Access console)**
-   - In the Device Access console, go to **Projects → OAuth** and upload the JSON from the Google Auth Platform.
-   - Click **Get access token** to start the consent flow.
-   - Sign in with the Google account that owns your Nest device and approve the requested scopes; the flow automatically
-     requests `https://www.googleapis.com/auth/sdm.service`.
-   - The console shows a bearer token—copy it. This is the value you pass to `--nest-token`.
-   - Tokens expire after an hour. If you need to refresh automatically, exchange the refresh token using standard OAuth flows
-     (or re-run the token flow when needed).
+4. **Register the OAuth client with Device Access and run the consent flow**
+   - In the Device Access console, go to **Projects → OAuth** and upload the JSON from the Google Cloud console.
+   - Start an OAuth flow using the [OAuth 2.0 Playground](https://developers.google.com/oauthplayground):
+     1. Click the gear icon and check **Use your own OAuth credentials**, then paste the `client_id` and `client_secret`.
+     2. In Step 1, add the scope `https://www.googleapis.com/auth/sdm.service` and click **Authorize APIs**.
+     3. Complete the Google sign-in with the account that owns the Nest device and approve the request.
+     4. In Step 2, click **Exchange authorization code for tokens** to receive an access token and refresh token.
+   - The access token (bearer token) is the value you pass to `--nest-token`. Tokens expire after an hour; use the refresh
+     token to obtain new access tokens as needed.
 
 5. **Find your device ID**
    - In the Device Access console, open **Devices**. You should see your Nest Doorbell listed. The **Name** column shows the
